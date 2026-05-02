@@ -36,11 +36,19 @@ Do not add any conversational filler, return ONLY the resolution text.`;
   } catch (error: any) {
     console.error('Error generating resolution with OpenAI:', error);
     
+    const companyMatch = prompt.match(/for\s+([^(]+?)\s*\(UEN/i) || prompt.match(/for\s+(.*?)\./i);
+    const uenMatch = prompt.match(/UEN:\s*([A-Za-z0-9]+)\)/i);
+    const directorMatch = prompt.match(/director[^i]*is\s+([^.]+)/i);
+    
+    const companyName = companyMatch ? companyMatch[1].trim() : '[Company Name]';
+    const uen = uenMatch ? uenMatch[1].trim() : '[UEN]';
+    const directorName = directorMatch ? directorMatch[1].trim() : '[Director]';
+
     // Fallback Mock just in case API fails during a demo
     const mockDraft = `DIRECTORS' RESOLUTION IN WRITING PASSED PURSUANT TO THE CONSTITUTION OF THE COMPANY
 
-COMPANY NAME: [Extracted Company Name]
-UEN: [Extracted UEN]
+COMPANY: ${companyName}
+UEN: ${uen}
 
 1. APPROVAL OF CORPORATE ACTION
 NOTED THAT the Company has proposed to execute the changes as requested by the Management.
@@ -55,8 +63,8 @@ RESOLVED FURTHER THAT any one Director or Company Secretary be authorised to sig
 Dated this: ${new Date().toLocaleDateString('en-SG')}
 
 _____________________
-Director
-`;
+${directorName}
+Director`;
 
     return NextResponse.json({ 
       draft: mockDraft, 
