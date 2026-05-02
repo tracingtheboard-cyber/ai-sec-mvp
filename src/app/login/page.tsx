@@ -1,24 +1,38 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "../../utils/supabase";
 import "../globals.css";
 
 export default function Login() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggingIn(true);
-    
-    // 在本地种下一个 auth=true 的 Cookie，有效期 1 天
+    setErrorMsg("");
+
+    // 真正的 Supabase 数据库验证
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setErrorMsg(error.message);
+      setIsLoggingIn(false);
+      return;
+    }
+
+    // 验证成功后，种下通行证 Cookie 让中间件放行
     document.cookie = "auth=true; path=/; max-age=86400";
     
-    // 模拟登录延迟，让演示看起来更真实
-    setTimeout(() => {
-      router.push("/");
-      router.refresh(); // 强制刷新路由以触发中间件校验
-    }, 1200);
+    router.push("/");
+    router.refresh();
   };
 
   return (
@@ -64,13 +78,21 @@ export default function Login() {
           </p>
         </div>
 
+        {errorMsg && (
+          <div style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid var(--danger)", color: "var(--danger)", padding: "12px", borderRadius: "8px", marginBottom: "20px", fontSize: "13px", textAlign: "center" }}>
+            {errorMsg}
+          </div>
+        )}
+
         <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           <div>
             <label style={{ display: "block", fontSize: "13px", fontWeight: "500", marginBottom: "8px", color: "#a1a1aa" }}>Work Email</label>
             <input 
               type="email" 
               required
-              defaultValue="admin@osometeam.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="admin@example.com"
               style={{
                 width: "100%",
                 padding: "12px 16px",
@@ -93,7 +115,9 @@ export default function Login() {
             <input 
               type="password" 
               required
-              defaultValue="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
               style={{
                 width: "100%",
                 padding: "12px 16px",
@@ -141,7 +165,7 @@ export default function Login() {
         
         <div style={{ textAlign: "center", marginTop: "30px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "20px" }}>
           <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>
-            Secured by enterprise-grade encryption.
+            Secured by Supabase enterprise-grade encryption.
           </p>
         </div>
 

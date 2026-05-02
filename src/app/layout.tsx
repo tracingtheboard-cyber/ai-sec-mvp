@@ -54,6 +54,22 @@ export default function RootLayout({
                   </li>
                 </Link>
               </ul>
+              
+              <div style={{ marginTop: "auto", paddingTop: "20px", borderTop: "1px solid var(--surface-border)" }}>
+                <button 
+                  onClick={async () => {
+                    const { supabase } = await import('../utils/supabase');
+                    await supabase.auth.signOut();
+                    document.cookie = 'auth=; Max-Age=0; path=/'; // 清除 cookie
+                    window.location.href = '/login';
+                  }}
+                  style={{ 
+                    width: "100%", background: "transparent", border: "1px solid var(--danger)", color: "var(--danger)", padding: "10px", borderRadius: "8px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontSize: "14px", fontWeight: "500" 
+                  }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                  Sign Out
+                </button>
+              </div>
             </aside>
             <main className="main-content">
               {children}
