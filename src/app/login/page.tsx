@@ -10,9 +10,14 @@ export default function Login() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggingIn(true);
+    
+    // 在本地种下一个 auth=true 的 Cookie，有效期 1 天
+    document.cookie = "auth=true; path=/; max-age=86400";
+    
     // 模拟登录延迟，让演示看起来更真实
     setTimeout(() => {
       router.push("/");
+      router.refresh(); // 强制刷新路由以触发中间件校验
     }, 1200);
   };
 
