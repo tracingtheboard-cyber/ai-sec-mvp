@@ -8,17 +8,24 @@ export default function Dashboard() {
   const [generatedDraft, setGeneratedDraft] = useState("");
   const [showDraft, setShowDraft] = useState(false);
   const [isSendingSign, setIsSendingSign] = useState(false);
+  const [contextEmail, setContextEmail] = useState("");
 
   useEffect(() => {
     const pendingDraft = localStorage.getItem("pendingDraft");
+    const pendingEmail = localStorage.getItem("pendingEmail");
+    
     if (pendingDraft) {
       setPrompt(pendingDraft);
       localStorage.removeItem("pendingDraft");
     }
+    if (pendingEmail) {
+      setContextEmail(pendingEmail);
+      localStorage.removeItem("pendingEmail");
+    }
   }, []);
 
   const handleSendSign = async () => {
-    const targetEmail = window.prompt("Enter the Director's email to send the signature request to:", "admin@osometeam.com");
+    const targetEmail = contextEmail || window.prompt("Enter the Director's email to send the signature request to:", "admin@osometeam.com");
     if (!targetEmail) return;
 
     setIsSendingSign(true);
