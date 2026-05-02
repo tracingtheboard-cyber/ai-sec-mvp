@@ -72,7 +72,7 @@ export default function Login() {
           }}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
           </div>
-          <h1 style={{ fontSize: "28px", fontWeight: "700", margin: "0 0 8px 0", color: "white" }}>CorpSec AI</h1>
+          <h1 style={{ fontSize: "28px", fontWeight: "700", margin: "0 0 8px 0", color: "white" }}>Brisk</h1>
           <p style={{ color: "var(--text-muted)", fontSize: "14px", margin: 0 }}>
             Intelligent Corporate Secretarial Platform
           </p>
