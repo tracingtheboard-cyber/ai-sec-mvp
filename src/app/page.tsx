@@ -197,7 +197,7 @@ export default function Dashboard() {
               className="action-item" 
               style={{ cursor: "pointer", transition: "transform 0.1s" }}
               onClick={() => {
-                const autoPrompt = "Draft an Annual Return filing resolution for Alpha Logistics Pte Ltd. They are 2 days away from deadline.";
+                const autoPrompt = "Draft an Annual Return filing resolution for Alpha Logistics Pte Ltd (UEN: 201988888C). The active director signing is David Chen. They are 2 days away from deadline.";
                 setPrompt(autoPrompt);
                 handleGenerate(autoPrompt);
               }}
@@ -215,7 +215,7 @@ export default function Dashboard() {
               className="action-item" 
               style={{ cursor: "pointer", transition: "transform 0.1s" }}
               onClick={() => {
-                const autoPrompt = "Draft the Annual General Meeting (AGM) notice and standard resolutions for Global Trade Corp.";
+                const autoPrompt = "Draft the Annual General Meeting (AGM) notice and standard resolutions for Global Trade Corp (UEN: 202198765B). The sole director signing the resolution is Jane Doe.";
                 setPrompt(autoPrompt);
                 handleGenerate(autoPrompt);
               }}
