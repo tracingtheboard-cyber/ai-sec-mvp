@@ -7,6 +7,30 @@ export default function Dashboard() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedDraft, setGeneratedDraft] = useState("");
   const [showDraft, setShowDraft] = useState(false);
+  const [isSendingSign, setIsSendingSign] = useState(false);
+
+  const handleSendSign = async () => {
+    const targetEmail = window.prompt("Enter the Director's email to send the signature request to:", "admin@osometeam.com");
+    if (!targetEmail) return;
+
+    setIsSendingSign(true);
+    try {
+      const res = await fetch('/api/sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ draftText: generatedDraft, email: targetEmail })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("🚀 Success! The signature request has been securely emailed to " + targetEmail);
+      } else {
+        alert("Error: " + data.error);
+      }
+    } catch (e) {
+      alert("Failed to connect to signature API.");
+    }
+    setIsSendingSign(false);
+  };
 
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
@@ -143,7 +167,9 @@ export default function Dashboard() {
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         Download PDF
                       </button>
-                      <button className="btn" style={{background: "var(--success)"}}>Send to DocuSign</button>
+                      <button className="btn" onClick={handleSendSign} disabled={isSendingSign} style={{background: "var(--success)", opacity: isSendingSign ? 0.7 : 1}}>
+                        {isSendingSign ? "Sending..." : "Send to E-Sign"}
+                      </button>
                    </div>
                 )}
              </div>

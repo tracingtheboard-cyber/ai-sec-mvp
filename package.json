@@ -11,6 +11,7 @@
   "dependencies": {
     "@google/genai": "^1.51.0",
     "@supabase/supabase-js": "^2.105.1",
+    "hellosign-sdk": "^2.1.0",
     "jspdf": "^4.2.1",
     "next": "16.2.4",
     "openai": "^6.35.0",
