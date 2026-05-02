@@ -28,13 +28,31 @@ export default function ClientsCRM() {
   const [clientsData, setClientsData] = useState(initialClients);
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleEmailChange = (company: string, directorIndex: number, newEmail: string) => {
+  const handleFieldChange = (company: string, field: string, value: string) => {
     const newData = { ...clientsData };
-    newData[company].directors[directorIndex].email = newEmail;
+    newData[company][field] = value;
+    setClientsData(newData);
+  };
+
+  const handleDirectorChange = (company: string, index: number, field: string, value: string) => {
+    const newData = { ...clientsData };
+    newData[company].directors[index][field] = value;
     setClientsData(newData);
   };
 
   const clientDetails = selectedClient ? clientsData[selectedClient] : null;
+
+  const inputStyle = {
+    background: "rgba(0,0,0,0.4)",
+    border: "1px solid var(--primary-color)",
+    color: "white",
+    padding: "4px 8px",
+    borderRadius: "4px",
+    outline: "none",
+    width: "100%",
+    fontSize: "14px",
+    fontFamily: "inherit"
+  };
 
   return (
     <>
@@ -91,46 +109,62 @@ export default function ClientsCRM() {
             
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
               <div>
-                <span style={{ color: "var(--text-muted)", fontSize: "12px", display: "block" }}>Company Name</span>
+                <span style={{ color: "var(--text-muted)", fontSize: "12px", display: "block", marginBottom: "4px" }}>Company Name</span>
                 <span style={{ fontSize: "16px", fontWeight: 600 }}>{selectedClient}</span>
               </div>
               <div style={{ display: "flex", gap: "40px" }}>
-                <div>
-                  <span style={{ color: "var(--text-muted)", fontSize: "12px", display: "block" }}>UEN</span>
-                  <span style={{ fontSize: "14px" }}>{clientDetails.uen}</span>
+                <div style={{ flex: 1 }}>
+                  <span style={{ color: "var(--text-muted)", fontSize: "12px", display: "block", marginBottom: "4px" }}>UEN</span>
+                  {isEditing ? (
+                    <input style={inputStyle} value={clientDetails.uen} onChange={(e) => handleFieldChange(selectedClient, 'uen', e.target.value)} />
+                  ) : (
+                    <span style={{ fontSize: "14px" }}>{clientDetails.uen}</span>
+                  )}
                 </div>
-                <div>
-                  <span style={{ color: "var(--text-muted)", fontSize: "12px", display: "block" }}>Financial Year End</span>
-                  <span style={{ fontSize: "14px" }}>{clientDetails.fye}</span>
+                <div style={{ flex: 1 }}>
+                  <span style={{ color: "var(--text-muted)", fontSize: "12px", display: "block", marginBottom: "4px" }}>Financial Year End</span>
+                  {isEditing ? (
+                    <input style={inputStyle} value={clientDetails.fye} onChange={(e) => handleFieldChange(selectedClient, 'fye', e.target.value)} />
+                  ) : (
+                    <span style={{ fontSize: "14px" }}>{clientDetails.fye}</span>
+                  )}
                 </div>
               </div>
               <div>
-                <span style={{ color: "var(--text-muted)", fontSize: "12px", display: "block" }}>Registered Address</span>
-                <span style={{ fontSize: "14px" }}>{clientDetails.address}</span>
+                <span style={{ color: "var(--text-muted)", fontSize: "12px", display: "block", marginBottom: "4px" }}>Registered Address</span>
+                {isEditing ? (
+                  <input style={inputStyle} value={clientDetails.address} onChange={(e) => handleFieldChange(selectedClient, 'address', e.target.value)} />
+                ) : (
+                  <span style={{ fontSize: "14px" }}>{clientDetails.address}</span>
+                )}
               </div>
               
               {/* Directors Section */}
               <div style={{ background: "rgba(0,0,0,0.2)", padding: "15px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
                 <span style={{ color: "var(--text-muted)", fontSize: "12px", display: "block", marginBottom: "12px", fontWeight: "bold" }}>OFFICIAL DIRECTORS & CONTACTS</span>
                 {clientDetails.directors.map((dir: any, i: number) => (
-                  <div key={i} style={{ background: "rgba(255,255,255,0.05)", padding: "12px", borderRadius: "8px", fontSize: "13px", marginBottom: i === clientDetails.directors.length - 1 ? 0 : "8px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div key={i} style={{ background: "rgba(255,255,255,0.05)", padding: "12px", borderRadius: "8px", fontSize: "13px", marginBottom: i === clientDetails.directors.length - 1 ? 0 : "8px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                    
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <div style={{ width: "28px", height: "28px", background: "var(--primary-color)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: "bold" }}>{dir.name.charAt(0)}</div>
-                      <div>
-                        <div style={{ fontWeight: 600 }}>{dir.name} <span style={{ color: "var(--text-muted)", fontSize: "11px", fontWeight: "normal" }}>({dir.nric})</span></div>
+                      <div style={{ width: "28px", height: "28px", background: "var(--primary-color)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: "bold", flexShrink: 0 }}>{dir.name.charAt(0)}</div>
+                      <div style={{ flex: 1, display: "flex", gap: "10px", alignItems: "center" }}>
+                        {isEditing ? (
+                          <>
+                            <input style={{...inputStyle, flex: 1}} value={dir.name} placeholder="Name" onChange={(e) => handleDirectorChange(selectedClient, i, 'name', e.target.value)} />
+                            <input style={{...inputStyle, flex: 1}} value={dir.nric} placeholder="ID (e.g. NRIC)" onChange={(e) => handleDirectorChange(selectedClient, i, 'nric', e.target.value)} />
+                          </>
+                        ) : (
+                          <div style={{ fontWeight: 600 }}>{dir.name} <span style={{ color: "var(--text-muted)", fontSize: "11px", fontWeight: "normal" }}>({dir.nric})</span></div>
+                        )}
                       </div>
                     </div>
-                    <div style={{ color: "var(--text-muted)", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+
+                    <div style={{ color: "var(--text-muted)", fontSize: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{flexShrink: 0}}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                       {isEditing ? (
-                        <input 
-                          type="email" 
-                          value={dir.email} 
-                          onChange={(e) => handleEmailChange(selectedClient, i, e.target.value)}
-                          style={{ background: "transparent", border: "1px solid var(--primary-color)", color: "white", padding: "2px 6px", borderRadius: "4px", outline: "none", width: "180px" }}
-                        />
+                        <input type="email" style={inputStyle} value={dir.email} placeholder="Email" onChange={(e) => handleDirectorChange(selectedClient, i, 'email', e.target.value)} />
                       ) : (
-                        dir.email
+                        <span>{dir.email}</span>
                       )}
                     </div>
                   </div>
@@ -140,7 +174,7 @@ export default function ClientsCRM() {
             
             <div style={{ marginTop: "30px", paddingTop: "20px", borderTop: "1px solid var(--surface-border)", display: "flex", gap: "10px" }}>
               <button className="btn" style={{ flex: 1, background: "var(--primary-color)" }}>Draft Resolution</button>
-              <button className="btn" onClick={() => setIsEditing(!isEditing)} style={{ flex: 1, background: isEditing ? "var(--success)" : "transparent", border: "1px solid var(--surface-border)" }}>
+              <button className="btn" onClick={() => setIsEditing(!isEditing)} style={{ flex: 1, background: isEditing ? "var(--success)" : "transparent", border: "1px solid var(--surface-border)", color: isEditing ? "white" : "inherit" }}>
                 {isEditing ? "Save Profile" : "Edit Profile"}
               </button>
             </div>
