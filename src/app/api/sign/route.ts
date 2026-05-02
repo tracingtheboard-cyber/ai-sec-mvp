@@ -12,8 +12,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing draft text or email' }, { status: 400 });
     }
 
-    // 为了让 Dropbox Sign 能识别，我们把生成的文本写进一个临时的文本文档里
-    const tmpFilePath = path.join(os.tmpdir(), `Board_Resolution_${Date.now()}.txt`);
+    // Write to a local directory instead of os.tmpdir() to avoid Windows path issues with the SDK
+    const tmpFilePath = path.join(process.cwd(), 'public', `Board_Resolution_${Date.now()}.txt`);
     fs.writeFileSync(tmpFilePath, draftText);
 
     const opts = {
