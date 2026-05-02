@@ -32,8 +32,9 @@ export default function Dashboard() {
     setIsSendingSign(false);
   };
 
-  const handleGenerate = async () => {
-    if (!prompt.trim()) return;
+  const handleGenerate = async (overridePrompt?: string) => {
+    const finalPrompt = overridePrompt || prompt;
+    if (!finalPrompt.trim()) return;
     
     setIsGenerating(true);
     setShowDraft(true);
@@ -43,7 +44,7 @@ export default function Dashboard() {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
+        body: JSON.stringify({ prompt: finalPrompt })
       });
       
       const data = await res.json();
@@ -192,14 +193,35 @@ export default function Dashboard() {
             <h2 className="action-title">Urgent Compliance</h2>
           </div>
           <div className="action-list">
-            <div className="action-item">
+            <div 
+              className="action-item" 
+              style={{ cursor: "pointer", transition: "transform 0.1s" }}
+              onClick={() => {
+                const autoPrompt = "Draft an Annual Return filing resolution for Alpha Logistics Pte Ltd. They are 2 days away from deadline.";
+                setPrompt(autoPrompt);
+                handleGenerate(autoPrompt);
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = "translateX(5px)"}
+              onMouseOut={(e) => e.currentTarget.style.transform = "translateX(0)"}
+            >
               <div className="action-info">
                 <span className="action-title">Alpha Logistics Pte Ltd</span>
                 <span className="action-meta">Annual Return Due</span>
               </div>
               <span className="badge badge-danger">2 Days Left</span>
             </div>
-            <div className="action-item">
+            
+            <div 
+              className="action-item" 
+              style={{ cursor: "pointer", transition: "transform 0.1s" }}
+              onClick={() => {
+                const autoPrompt = "Draft the Annual General Meeting (AGM) notice and standard resolutions for Global Trade Corp.";
+                setPrompt(autoPrompt);
+                handleGenerate(autoPrompt);
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = "translateX(5px)"}
+              onMouseOut={(e) => e.currentTarget.style.transform = "translateX(0)"}
+            >
               <div className="action-info">
                 <span className="action-title">Global Trade Corp</span>
                 <span className="action-meta">AGM Due</span>
