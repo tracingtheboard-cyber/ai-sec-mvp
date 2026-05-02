@@ -176,7 +176,7 @@ export default function ClientsCRM() {
               <button 
                 className="btn" 
                 onClick={() => {
-                  const intent = `Draft a corporate resolution for ${selectedClient} (UEN: ${clientDetails.uen}). The signing director is ${clientDetails.directors[0].name}.`;
+                  const intent = `Draft a corporate resolution for ${selectedClient} (UEN: ${clientDetails.uen}) regarding [PLEASE TYPE YOUR SPECIFIC ACTION HERE, e.g., changing registered address to 123 Main St]. The signing director is ${clientDetails.directors[0].name}.`;
                   localStorage.setItem("pendingDraft", intent);
                   window.location.href = '/';
                 }}
