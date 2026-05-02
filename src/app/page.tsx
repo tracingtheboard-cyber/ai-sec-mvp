@@ -40,9 +40,9 @@ export default function Dashboard() {
     setIsSendingSign(false);
   };
 
-  const handleGenerate = async (overridePrompt?: string) => {
-    const finalPrompt = overridePrompt || prompt;
-    if (!finalPrompt.trim()) return;
+  const handleGenerate = async (overridePrompt?: any) => {
+    const finalPrompt = typeof overridePrompt === 'string' ? overridePrompt : prompt;
+    if (!finalPrompt || !finalPrompt.trim()) return;
     
     setIsGenerating(true);
     setShowDraft(true);
