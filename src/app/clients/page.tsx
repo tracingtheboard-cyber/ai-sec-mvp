@@ -173,7 +173,17 @@ export default function ClientsCRM() {
             </div>
             
             <div style={{ marginTop: "30px", paddingTop: "20px", borderTop: "1px solid var(--surface-border)", display: "flex", gap: "10px" }}>
-              <button className="btn" style={{ flex: 1, background: "var(--primary-color)" }}>Draft Resolution</button>
+              <button 
+                className="btn" 
+                onClick={() => {
+                  const intent = `Draft a corporate resolution for ${selectedClient} (UEN: ${clientDetails.uen}). The signing director is ${clientDetails.directors[0].name}.`;
+                  localStorage.setItem("pendingDraft", intent);
+                  window.location.href = '/';
+                }}
+                style={{ flex: 1, background: "var(--primary-color)" }}
+              >
+                Draft Resolution
+              </button>
               <button className="btn" onClick={() => setIsEditing(!isEditing)} style={{ flex: 1, background: isEditing ? "var(--success)" : "transparent", border: "1px solid var(--surface-border)", color: isEditing ? "white" : "inherit" }}>
                 {isEditing ? "Save Profile" : "Edit Profile"}
               </button>

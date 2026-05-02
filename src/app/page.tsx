@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { jsPDF } from "jspdf";
 
 export default function Dashboard() {
@@ -8,6 +8,14 @@ export default function Dashboard() {
   const [generatedDraft, setGeneratedDraft] = useState("");
   const [showDraft, setShowDraft] = useState(false);
   const [isSendingSign, setIsSendingSign] = useState(false);
+
+  useEffect(() => {
+    const pendingDraft = localStorage.getItem("pendingDraft");
+    if (pendingDraft) {
+      setPrompt(pendingDraft);
+      localStorage.removeItem("pendingDraft");
+    }
+  }, []);
 
   const handleSendSign = async () => {
     const targetEmail = window.prompt("Enter the Director's email to send the signature request to:", "admin@osometeam.com");
