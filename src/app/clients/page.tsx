@@ -1,30 +1,40 @@
 "use client";
 import { useState } from "react";
 
+const initialClients: Record<string, any> = {
+  "TechNova Pte Ltd": {
+    uen: "202312345A",
+    address: "1 Marina Boulevard, #20-01, Singapore 018989",
+    directors: [
+      { name: "John Doe", nric: "S1234567A", email: "john.doe@technova.sg" },
+      { name: "Alice Smith", nric: "F7654321B", email: "alice@technova.sg" }
+    ],
+    fye: "31 Dec",
+    status: "Active"
+  },
+  "Global Trade Corp": {
+    uen: "202198765B",
+    address: "10 Anson Road, #15-15, International Plaza, Singapore 079903",
+    directors: [
+      { name: "Jane Doe", nric: "S9876543C", email: "jane.doe@globaltrade.com" }
+    ],
+    fye: "30 Jun",
+    status: "Active"
+  }
+};
+
 export default function ClientsCRM() {
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
+  const [clientsData, setClientsData] = useState(initialClients);
+  const [isEditing, setIsEditing] = useState(false);
 
-  const mockClientDetails: Record<string, any> = {
-    "TechNova Pte Ltd": {
-      uen: "202312345A",
-      address: "1 Marina Boulevard, #20-01, Singapore 018989",
-      directors: [
-        { name: "John Doe", nric: "S1234567A", email: "john.doe@technova.sg" },
-        { name: "Alice Smith", nric: "F7654321B", email: "alice@technova.sg" }
-      ],
-      fye: "31 Dec",
-      status: "Active"
-    },
-    "Global Trade Corp": {
-      uen: "202198765B",
-      address: "10 Anson Road, #15-15, International Plaza, Singapore 079903",
-      directors: [
-        { name: "Jane Doe", nric: "S9876543C", email: "jane.doe@globaltrade.com" }
-      ],
-      fye: "30 Jun",
-      status: "Active"
-    }
+  const handleEmailChange = (company: string, directorIndex: number, newEmail: string) => {
+    const newData = { ...clientsData };
+    newData[company].directors[directorIndex].email = newEmail;
+    setClientsData(newData);
   };
+
+  const clientDetails = selectedClient ? clientsData[selectedClient] : null;
 
   return (
     <>
@@ -48,26 +58,23 @@ export default function ClientsCRM() {
             </tr>
           </thead>
           <tbody>
-            <tr style={{ borderBottom: "1px solid var(--surface-border)", background: "rgba(255,255,255,0.02)" }}>
-              <td style={{ padding: "12px", fontWeight: 500 }}>TechNova Pte Ltd</td>
-              <td style={{ padding: "12px", color: "var(--text-muted)" }}>202312345A</td>
-              <td style={{ padding: "12px" }}>31 Dec</td>
-              <td style={{ padding: "12px" }}><span className="badge" style={{background: "var(--success)", color: "white"}}>Active</span></td>
-              <td style={{ padding: "12px" }}><button className="btn" onClick={() => setSelectedClient("TechNova Pte Ltd")} style={{padding: "4px 8px", fontSize: "12px"}}>Manage</button></td>
-            </tr>
-            <tr style={{ borderBottom: "1px solid var(--surface-border)" }}>
-              <td style={{ padding: "12px", fontWeight: 500 }}>Global Trade Corp</td>
-              <td style={{ padding: "12px", color: "var(--text-muted)" }}>202198765B</td>
-              <td style={{ padding: "12px" }}>30 Jun</td>
-              <td style={{ padding: "12px" }}><span className="badge" style={{background: "var(--success)", color: "white"}}>Active</span></td>
-              <td style={{ padding: "12px" }}><button className="btn" onClick={() => setSelectedClient("Global Trade Corp")} style={{padding: "4px 8px", fontSize: "12px"}}>Manage</button></td>
-            </tr>
+            {Object.keys(clientsData).map((companyName) => (
+              <tr key={companyName} style={{ borderBottom: "1px solid var(--surface-border)" }}>
+                <td style={{ padding: "12px", fontWeight: 500 }}>{companyName}</td>
+                <td style={{ padding: "12px", color: "var(--text-muted)" }}>{clientsData[companyName].uen}</td>
+                <td style={{ padding: "12px" }}>{clientsData[companyName].fye}</td>
+                <td style={{ padding: "12px" }}><span className="badge" style={{background: "var(--success)", color: "white"}}>Active</span></td>
+                <td style={{ padding: "12px" }}>
+                  <button className="btn" onClick={() => { setSelectedClient(companyName); setIsEditing(false); }} style={{padding: "4px 8px", fontSize: "12px"}}>Manage</button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
 
       {/* Modal / Sliding Panel for Client Details */}
-      {selectedClient && (
+      {selectedClient && clientDetails && (
         <div style={{
           position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
           background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)",
@@ -90,23 +97,23 @@ export default function ClientsCRM() {
               <div style={{ display: "flex", gap: "40px" }}>
                 <div>
                   <span style={{ color: "var(--text-muted)", fontSize: "12px", display: "block" }}>UEN</span>
-                  <span style={{ fontSize: "14px" }}>{mockClientDetails[selectedClient].uen}</span>
+                  <span style={{ fontSize: "14px" }}>{clientDetails.uen}</span>
                 </div>
                 <div>
                   <span style={{ color: "var(--text-muted)", fontSize: "12px", display: "block" }}>Financial Year End</span>
-                  <span style={{ fontSize: "14px" }}>{mockClientDetails[selectedClient].fye}</span>
+                  <span style={{ fontSize: "14px" }}>{clientDetails.fye}</span>
                 </div>
               </div>
               <div>
                 <span style={{ color: "var(--text-muted)", fontSize: "12px", display: "block" }}>Registered Address</span>
-                <span style={{ fontSize: "14px" }}>{mockClientDetails[selectedClient].address}</span>
+                <span style={{ fontSize: "14px" }}>{clientDetails.address}</span>
               </div>
               
               {/* Directors Section */}
               <div style={{ background: "rgba(0,0,0,0.2)", padding: "15px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
                 <span style={{ color: "var(--text-muted)", fontSize: "12px", display: "block", marginBottom: "12px", fontWeight: "bold" }}>OFFICIAL DIRECTORS & CONTACTS</span>
-                {mockClientDetails[selectedClient].directors.map((dir: any, i: number) => (
-                  <div key={i} style={{ background: "rgba(255,255,255,0.05)", padding: "12px", borderRadius: "8px", fontSize: "13px", marginBottom: i === mockClientDetails[selectedClient].directors.length - 1 ? 0 : "8px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                {clientDetails.directors.map((dir: any, i: number) => (
+                  <div key={i} style={{ background: "rgba(255,255,255,0.05)", padding: "12px", borderRadius: "8px", fontSize: "13px", marginBottom: i === clientDetails.directors.length - 1 ? 0 : "8px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                       <div style={{ width: "28px", height: "28px", background: "var(--primary-color)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: "bold" }}>{dir.name.charAt(0)}</div>
                       <div>
@@ -115,7 +122,16 @@ export default function ClientsCRM() {
                     </div>
                     <div style={{ color: "var(--text-muted)", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                      {dir.email}
+                      {isEditing ? (
+                        <input 
+                          type="email" 
+                          value={dir.email} 
+                          onChange={(e) => handleEmailChange(selectedClient, i, e.target.value)}
+                          style={{ background: "transparent", border: "1px solid var(--primary-color)", color: "white", padding: "2px 6px", borderRadius: "4px", outline: "none", width: "180px" }}
+                        />
+                      ) : (
+                        dir.email
+                      )}
                     </div>
                   </div>
                 ))}
@@ -124,7 +140,9 @@ export default function ClientsCRM() {
             
             <div style={{ marginTop: "30px", paddingTop: "20px", borderTop: "1px solid var(--surface-border)", display: "flex", gap: "10px" }}>
               <button className="btn" style={{ flex: 1, background: "var(--primary-color)" }}>Draft Resolution</button>
-              <button className="btn" style={{ flex: 1, background: "transparent", border: "1px solid var(--surface-border)" }}>Edit Profile</button>
+              <button className="btn" onClick={() => setIsEditing(!isEditing)} style={{ flex: 1, background: isEditing ? "var(--success)" : "transparent", border: "1px solid var(--surface-border)" }}>
+                {isEditing ? "Save Profile" : "Edit Profile"}
+              </button>
             </div>
           </div>
         </div>
