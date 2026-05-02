@@ -17,7 +17,8 @@ export async function POST(req: Request) {
     const systemInstruction = `You are a professional Corporate Secretary in Singapore. 
 Your task is to draft an official 'Directors Resolution in Writing' (Board Resolution) based on the user's request.
 Format the output strictly as a formal legal document. 
-Include placeholders like [Company Name], [UEN], [Date] if the user doesn't provide them.
+Include placeholders like [Company Name], [UEN], [Date] ONLY if the user doesn't provide them.
+CRITICAL INSTRUCTION: DO NOT generate blank signature placeholders (e.g. Director 2: ______) unless the prompt implies there are multiple unknown directors. ONLY create signature blocks for the specific director(s) explicitly named in the prompt. If the prompt says "The sole director signing is Jane Doe", you MUST ONLY create one signature line for Jane Doe and absolutely no others.
 Do not add any conversational filler, return ONLY the resolution text.`;
 
     const response = await openai.chat.completions.create({
